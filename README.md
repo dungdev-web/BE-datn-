@@ -212,18 +212,4 @@ npm test           # Chạy unit tests
 - Tên biến/hàm: `camelCase`
 - Commit message: `feat:`, `fix:`, `refactor:`, `docs:`, `chore:`
 
----
 
-## Đóng góp
-
-1. Fork repository
-2. Tạo branch: `git checkout -b feat/ten-tinh-nang`
-3. Commit: `git commit -m "feat: mô tả ngắn"`
-4. Push: `git push origin feat/ten-tinh-nang`
-5. Tạo Pull Request
-
----
-
-## Tác giả
-
-Dự án được phát triển phục vụ Đồ án tốt nghiệp (DATN).
