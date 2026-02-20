@@ -136,3 +136,10 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+# Docker
+Dockerfile
+compose.yaml
+compose.yml
+docker-compose.yaml
+docker-compose.yml
+.dockerignore
