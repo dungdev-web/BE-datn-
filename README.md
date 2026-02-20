@@ -12,6 +12,7 @@ Backend RESTful API cho hệ thống thương mại điện tử, xây dựng th
 | Prisma ORM | Truy vấn database |
 | Docker + Docker Compose | Container hóa môi trường |
 | PostgreSQL / MySQL | Database chính |
+| ZaloPay API | Cổng thanh toán trực tuyến |
 
 ---
 
@@ -121,6 +122,13 @@ JWT_EXPIRES_IN=7d
 # Upload
 UPLOAD_DIR=./uploads
 MAX_FILE_SIZE=5mb
+
+# ZaloPay
+ZALOPAY_APP_ID=your_app_id
+ZALOPAY_KEY1=your_key1
+ZALOPAY_KEY2=your_key2
+ZALOPAY_ENDPOINT=https://sb-openapi.zalopay.vn/v2
+ZALOPAY_CALLBACK_URL=https://yourdomain.com/api/payment/zalopay/callback
 ```
 
 ### 3. Chạy với Docker (khuyến nghị)
@@ -190,6 +198,55 @@ npx prisma db seed
 | PUT | `/api/products/:id` | Cập nhật sản phẩm (Admin) |
 | DELETE | `/api/products/:id` | Xoá sản phẩm (Admin) |
 
+### Payment — ZaloPay
+| Method | Endpoint | Mô tả |
+|--------|----------|-------|
+| POST | `/api/payment/zalopay/create` | Tạo đơn thanh toán ZaloPay |
+| POST | `/api/payment/zalopay/callback` | Nhận kết quả từ ZaloPay (webhook) |
+| POST | `/api/payment/zalopay/query` | Truy vấn trạng thái giao dịch |
+| POST | `/api/payment/zalopay/refund` | Hoàn tiền giao dịch |
+| GET | `/api/payment/zalopay/refund/:refund_id` | Kiểm tra trạng thái hoàn tiền |
+
+---
+
+## Luồng thanh toán ZaloPay
+
+```
+[Client] ──POST /create──→ [Backend]
+                                │
+                    Ký HMAC_SHA256 bằng key1
+                                │
+                                ▼
+                         [ZaloPay API]
+                                │
+                    Trả về order_url + zp_trans_token
+                                │
+                                ▼
+              [Client redirect → Trang thanh toán ZaloPay]
+                                │
+                    User thanh toán thành công
+                                │
+                                ▼
+              [ZaloPay gọi callback_url của Backend]
+                                │
+                    Verify HMAC bằng key2
+                    Cập nhật trạng thái đơn hàng
+                                │
+                                ▼
+                         [Order: PAID ✅]
+```
+
+### Sandbox testing
+
+ZaloPay cung cấp môi trường sandbox để test trước khi lên production:
+
+```env
+ZALOPAY_ENDPOINT=https://sb-openapi.zalopay.vn/v2   # Sandbox
+# ZALOPAY_ENDPOINT=https://openapi.zalopay.vn/v2    # Production
+```
+
+Thông tin tài khoản sandbox lấy tại: [https://developers.zalopay.vn](https://developers.zalopay.vn)
+
 ---
 
 ## Scripts
@@ -211,5 +268,4 @@ npm test           # Chạy unit tests
 - Tên class: `PascalCase`
 - Tên biến/hàm: `camelCase`
 - Commit message: `feat:`, `fix:`, `refactor:`, `docs:`, `chore:`
-
 
