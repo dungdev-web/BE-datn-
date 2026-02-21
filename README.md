@@ -13,6 +13,7 @@ Backend RESTful API cho hệ thống thương mại điện tử về giày, xâ
 | Docker + Docker Compose | Container hóa môi trường |
 | PostgreSQL / MySQL | Database chính |
 | ZaloPay API | Cổng thanh toán trực tuyến |
+| OpenAI API | Chat bot trực tuyến |
 
 ---
 
@@ -220,6 +221,12 @@ npx prisma db seed
 | POST | `/payment/checkout` | Tạo đơn thanh toán ZaloPay hoặc thanh toán bằng tiền mặt|
 | POST | `/payment/callback` | Nhận kết quả từ ZaloPay (webhook) |
 | POST | `/payment/order-status/:app_trans_id` | Truy vấn trạng thái giao dịch |
+
+### ChatAI — OpenAI
+| Method | Endpoint | Mô tả |
+|--------|----------|-------|
+| POST | `/chatAI/chat` | Chat với chat bot|
+| GET  | `/chatAI/health` | Xác nhận đã kết nối với chat bot|
 
 ---
 
