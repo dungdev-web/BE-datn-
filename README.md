@@ -1,10 +1,19 @@
+<div align="center">
+
 # BE-DATN — Ecommerce Backend
 
-Backend RESTful API cho hệ thống thương mại điện tử, xây dựng theo kiến trúc **Clean Architecture + DDD (Domain-Driven Design)**.
+Backend RESTful API cho hệ thống thương mại điện tử về giày, xây dựng theo kiến trúc **Clean Architecture + DDD (Domain-Driven Design)**.
+
+![Node.js](https://img.shields.io/badge/Node.js-339933?style=flat-square&logo=node.js&logoColor=white)
+![Express](https://img.shields.io/badge/Express-000000?style=flat-square&logo=express&logoColor=white)
+![MySQL](https://img.shields.io/badge/MySQL-005C84?style=flat-square&logo=mysql&logoColor=white)
+
+</div>
+
 
 ---
 
-## Tech Stack
+## Công nghệ sử dụng
 
 | Công nghệ | Mục đích |
 |-----------|---------|
@@ -13,6 +22,7 @@ Backend RESTful API cho hệ thống thương mại điện tử, xây dựng th
 | Docker + Docker Compose | Container hóa môi trường |
 | PostgreSQL / MySQL | Database chính |
 | ZaloPay API | Cổng thanh toán trực tuyến |
+| OpenAI API | Chat bot trực tuyến |
 
 ---
 
@@ -32,7 +42,7 @@ BE-DATN/
 │   ├── domain/               ← Tầng core: business logic thuần túy
 │   │   ├── product/          ← Entity, Value Object, Domain Service cho Product
 │   │   └── user/             ← Entity, Value Object, Domain Service cho User
-│   │
+│   │   ...
 │   ├── entrypoint/
 │   │   ├── index.js          ← Khởi động ứng dụng
 │   │   └── server.js         ← Cấu hình Express server, middleware, routes
@@ -41,7 +51,7 @@ BE-DATN/
 │   │   ├── repository/       ← Triển khai Repository (Prisma, DB queries)
 │   │   └── usecase/          ← Triển khai Use Case cụ thể
 │   │
-│   ├── interfaces/           ← Controllers, Route handlers (HTTP interface)
+│   |
 │   │
 │   ├── shared/               ← Utilities dùng chung: errors, constants, helpers
 │   │
@@ -68,7 +78,7 @@ BE-DATN/
 
 ```
 ┌─────────────────────────────────────────┐
-│           interfaces/                   │  ← HTTP Controllers, Routes
+│           adapter/api                   │  ← HTTP Controllers, Routes
 ├─────────────────────────────────────────┤
 │           application/                  │  ← Use Cases, Orchestration
 ├─────────────────────────────────────────┤
@@ -94,7 +104,6 @@ BE-DATN/
 
 ```bash
 git clone https://github.com/your-username/BE-DATN.git
-cd BE-DATN
 npm install
 ```
 
@@ -109,19 +118,24 @@ Các biến môi trường cần thiết:
 
 ```env
 # Database
-DATABASE_URL="postgresql://user:password@localhost:5432/ecommerce_db"
-
+DATABASE_URL="mysql://root:@localhost:3306/terashoes"
+DB_HOST="localhost"
+DB_USER="root"
+DB_PASSWORD=""
+DB_NAME="tera"
+BASE_URL=
 # Server
 PORT=3000
-NODE_ENV=development
-
+#Google
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+NEXTAUTH_URL=
+GOOGLE_REDIRECT_URI=
 # JWT
 JWT_SECRET=your_super_secret_key
-JWT_EXPIRES_IN=7d
 
-# Upload
-UPLOAD_DIR=./uploads
-MAX_FILE_SIZE=5mb
+# Url
+FRONTEND_URL=
 
 # ZaloPay
 ZALOPAY_APP_ID=your_app_id
@@ -129,6 +143,13 @@ ZALOPAY_KEY1=your_key1
 ZALOPAY_KEY2=your_key2
 ZALOPAY_ENDPOINT=https://sb-openapi.zalopay.vn/v2
 ZALOPAY_CALLBACK_URL=https://yourdomain.com/api/payment/zalopay/callback
+NGROK_URL=
+#Mail
+RESEND_API_KEY=
+MAIL_FROM=onboarding@resend.dev
+MAIL_RECEIVER=dung.dev.web@gmail.com
+#Api key chat bot
+OPENAI_API_KEY=
 ```
 
 ### 3. Chạy với Docker (khuyến nghị)
@@ -173,39 +194,48 @@ npx prisma db seed
 
 ---
 
-## API Endpoints (tổng quan)
+## Some API Endpoints (tổng quan)
 
 ### Auth
 | Method | Endpoint | Mô tả |
 |--------|----------|-------|
-| POST | `/api/auth/register` | Đăng ký tài khoản |
-| POST | `/api/auth/login` | Đăng nhập |
-| POST | `/api/auth/refresh` | Làm mới token |
-| POST | `/api/auth/logout` | Đăng xuất |
-
+| POST | `/user/auth/register` | Đăng ký tài khoản |
+| POST | `/user/auth/login` | Đăng nhập |
+| POST | `/user/auth/check-token` | Kiểm tra token |
+| POST | `/user/auth/logout` | Đăng xuất |
+| POST | `/user/google/callback` | Đăng nhập google |
+...
 ### User
 | Method | Endpoint | Mô tả |
 |--------|----------|-------|
-| GET | `/api/users/me` | Thông tin cá nhân |
-| PUT | `/api/users/me` | Cập nhật hồ sơ |
-
+| GET | `/users/profile/:userId` | Thông tin cá nhân |
+| PUT | `/users/addresses/:addressId` | Cập nhật địa chỉ giao hàng |
+| PUT | `/users/update` | Upload hình đại diện hồ sơ |
+| GET | `/users/orders/:orderId` | Lấy danh sách đơn hàng |
+| GET | `/users/addresses/:userId` | Lấy danh sách địa chỉ giao hàng |
+...
 ### Product
 | Method | Endpoint | Mô tả |
 |--------|----------|-------|
-| GET | `/api/products` | Danh sách sản phẩm |
-| GET | `/api/products/:id` | Chi tiết sản phẩm |
-| POST | `/api/products` | Tạo sản phẩm (Admin) |
-| PUT | `/api/products/:id` | Cập nhật sản phẩm (Admin) |
-| DELETE | `/api/products/:id` | Xoá sản phẩm (Admin) |
-
+| GET | `/product` | Danh sách sản phẩm |
+| GET | `/product/detail/:id` | Chi tiết sản phẩm |
+| GET | `/product/detail/slug` | Chi tiết sản phẩm |
+| POST | `/product/add-product` | Tạo sản phẩm (Admin) |
+| PUT | `/product/update-product/:id` | Cập nhật sản phẩm (Admin) |
+| DELETE | `/product/delete/:id` | Xoá sản phẩm (Admin) |
+...
 ### Payment — ZaloPay
 | Method | Endpoint | Mô tả |
 |--------|----------|-------|
-| POST | `/api/payment/zalopay/create` | Tạo đơn thanh toán ZaloPay |
-| POST | `/api/payment/zalopay/callback` | Nhận kết quả từ ZaloPay (webhook) |
-| POST | `/api/payment/zalopay/query` | Truy vấn trạng thái giao dịch |
-| POST | `/api/payment/zalopay/refund` | Hoàn tiền giao dịch |
-| GET | `/api/payment/zalopay/refund/:refund_id` | Kiểm tra trạng thái hoàn tiền |
+| POST | `/payment/checkout` | Tạo đơn thanh toán ZaloPay hoặc thanh toán bằng tiền mặt|
+| POST | `/payment/callback` | Nhận kết quả từ ZaloPay (webhook) |
+| POST | `/payment/order-status/:app_trans_id` | Truy vấn trạng thái giao dịch |
+
+### ChatAI — OpenAI
+| Method | Endpoint | Mô tả |
+|--------|----------|-------|
+| POST | `/chatAI/chat` | Chat với chat bot|
+| GET  | `/chatAI/health` | Xác nhận đã kết nối với chat bot|
 
 ---
 
@@ -233,7 +263,7 @@ npx prisma db seed
                     Cập nhật trạng thái đơn hàng
                                 │
                                 ▼
-                         [Order: PAID ✅]
+                         [Order: PAID ]
 ```
 
 ### Sandbox testing
