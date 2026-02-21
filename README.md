@@ -1,7 +1,13 @@
+<div align="center">
+
 # BE-DATN — Ecommerce Backend
 
 Backend RESTful API cho hệ thống thương mại điện tử về giày, xây dựng theo kiến trúc **Clean Architecture + DDD (Domain-Driven Design)**.
+![Node.js](https://img.shields.io/badge/Node.js-339933?style=flat-square&logo=node.js&logoColor=white)
+![Express](https://img.shields.io/badge/Express-000000?style=flat-square&logo=express&logoColor=white)
+![MySQL](https://img.shields.io/badge/MySQL-005C84?style=flat-square&logo=mysql&logoColor=white)
 
+</div>
 ---
 
 ## Tech Stack
