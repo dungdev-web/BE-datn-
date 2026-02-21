@@ -1,5 +1,4 @@
 const { Resend } = require('resend');
-const resend = new Resend(process.env.RESEND_API_KEY);
 
 async function sendContactEmailUsecase({ name, email, phone, message }) {
   if (!name || !email || !phone || !message) {
@@ -17,10 +16,13 @@ async function sendContactEmailUsecase({ name, email, phone, message }) {
   // ⚠️ Gợi ý dùng email mặc định Resend nếu domain của bạn chưa xác minh
   const fromEmail = process.env.MAIL_FROM || 'onboarding@resend.dev';
 
+  // ✅ Khởi tạo trong function để đảm bảo .env đã được load
+  const resend = new Resend(process.env.RESEND_API_KEY);
+
   try {
     const response = await resend.emails.send({
       from: `Liên hệ <${fromEmail}>`,
-      to: [process.env.MAIL_RECEIVER || 'your@email.com'], // fallback nếu MAIL_RECEIVER chưa có
+      to: [process.env.MAIL_RECEIVER || 'your@email.com'],
       subject: `[Liên hệ] ${phone}`,
       html: htmlContent,
     });
