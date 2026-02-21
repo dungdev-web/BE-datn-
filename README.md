@@ -13,7 +13,7 @@ Backend RESTful API cho hệ thống thương mại điện tử về giày, xâ
 
 ---
 
-## Tech Stack
+## Công nghệ sử dụng
 
 | Công nghệ | Mục đích |
 |-----------|---------|
