@@ -64,7 +64,7 @@ router.get("/related/:productId", getRelatedProductsHandler);
 router.get("/gender", getProductsByGenderHandler);
 router.post(
   "/add-product",
-  upload.any(), // cho phép tất cả field name, không giới hạn
+  upload.any(), 
   validateRealImage,
   addProductHandler
 );

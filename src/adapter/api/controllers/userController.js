@@ -31,13 +31,19 @@ const {
   updateUsersHandler
 } = require("../../../application/user/userHttpHandler");
 require("../../../infrastructure/repository/brandRepository");
-router.post("/login", loginHandler);
-router.post("/logout", logoutHandler);
-router.post("/register", registerHandler);
+// auth
+router.post("/auth/login", loginHandler);
+router.post("/auth/logout", logoutHandler);
+router.post("/auth/register", registerHandler);
+router.get("/auth/check-token", checkTokenHandler);
+router.post("/google/callback",googleCallback);
+router.post('/auth/forget', sendResetPassHandler);
+router.post('/auth/confirm-email', confirmEmailHandler);
+router.post('/auth/reset-password', ResetPassHandler);
+
+//user
 router.put("/update" , upload.single('avatar'), validateRealImage, updateUserHandler);
 router.post("/add-address", addAddressHandler);
-router.get("/check-token", checkTokenHandler);
-router.post("/google/callback",googleCallback);
 router.put("/change-pass", changePasswordHandler);
 router.get('/get-cart/:userId', getCartByUserHandler);
 router.get('/addresses/:userId', getAddressesByUserHandler);
@@ -51,9 +57,6 @@ router.get('/orders/:orderId', getOrderDetailHandler);
 router.get('/wishlist/:userId', getWishlistByUserHandler);
 router.post('/send', sendMailHandler);
 router.get('/user_default_address/:userId', getDefaultAddressHandler);
-router.post('/confirm-email', confirmEmailHandler);
-router.post('/forget', sendResetPassHandler);
-router.post('/reset-password', ResetPassHandler);
 router.put('/update-order-status/:orderId', updateOrderStatusHandler);
 router.post("/user-vouchers", addUserVoucherHandler);
 router.get('/all-user', getAllUsersHandler);

@@ -30,7 +30,8 @@ const addUserVoucherUsecase = require("../../infrastructure/usecase/user/addUser
 const getAllUsersUsecase = require("../../infrastructure/usecase/user/getAllUserUsecase");
 const updateUsersUsecase = require("../../infrastructure/usecase/user/updateUsersUsecase");
 const FRONTEND_URL = process.env.FRONTEND_URL;
-
+const CLIENT_ID= process.env.GOOGLE_CLIENT_ID;
+const CLIENT_SECRET= process.env.GOOGLE_CLIENT_SECRET;
 // Tạo repository và usecase
 const googleAuthRepository = new GoogleAuthRepository();
 const googleAuthUsecase = new GoogleAuthUsecase(googleAuthRepository);
@@ -59,9 +60,8 @@ async function updateOrderStatusHandler(req, res) {
 async function googleCallback(req, res) {
   try {
     const { code } = req.body;
-    const client_id =
-      "235575927586-1ldvr8n16m7ose9db21aa0nvqhnb9m0a.apps.googleusercontent.com";
-    const client_secret = "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";
+    const client_id =CLIENT_ID;
+    const client_secret = CLIENT_SECRET
     const redirect_uri = `${FRONTEND_URL}/google/callback`;
     const jwtSecret = process.env.JWT_SECRET || "YOUR_JWT_SECRET";
 
@@ -74,9 +74,9 @@ async function googleCallback(req, res) {
     );
     res.cookie("token", result.token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production", // chỉ HTTPS khi production
-      sameSite: "strict", // hoặc "strict"
-      maxAge: 60 * 60 * 24, // 24 giờ
+      secure: process.env.NODE_ENV === "production", 
+      sameSite: "strict", 
+      maxAge: 60 * 60 * 24, 
     });
 
     res.json(result);
